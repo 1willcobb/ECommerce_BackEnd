@@ -7,30 +7,62 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', async (req, res) => {
   try {
     const allProducts = await Product.findAll({
-      include: [{
-        model: Tag, 
-        through: { attributes:[]},
-        as: 'tag',
-        attributes: ['tag_name'],
-      }]
+      include: [
+        {
+          model: Category
+        },
+        {
+          model: Tag, 
+          as: 'tags'
+        },
+      ]
     });
-    !allProducts && res.status(404).send("Not found")
 
-    res.status(200).json(allProducts)
+    if (allProducts == 0) {
+      return res.status(404).send("Not Found")
+    } 
+
+    // THIS IS A BONUS FUNCTION I DECIDED TO ADD
+    const mappedProduct = allProducts.map((product)=> {
+      return {
+        ...product.get({ plain: true }), 
+          tags: product.tags.map((tag)=>{
+            return tag.tag_name
+          }),
+          category: product.category.category_name
+      }
+    })
+
+    res.status(200).json(mappedProduct)
   } catch(err){
-    res.status(500).send("Sever Error")
     console.log(err)
+    res.status(500).send("Sever Error")
   }
-
-  // find all products
-  // be sure to include its associated Category and Tag data
-  
 });
 
 // get one product
-router.get('/:id', (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+router.get('/:id', async (req, res) => {
+  try {
+    const item = await Product.findByPk(req.params.id, {
+      include: [
+        {
+          model:Category
+        },
+        {
+        model: Tag, 
+        as: 'tags'
+      }]
+    })
+
+    if (!item) {
+      return res.status(404).send("Not Found")
+    } 
+    
+    res.status(200).json({item})
+  }catch(err){
+    console.log(err)
+    res.status(500).send("Sever Error")
+  }
 });
 
 // create new product
@@ -107,8 +139,25 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+router.delete('/:id', async (req, res) => {
+  try {
+    const destroyedProduct = await Product.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
+
+    if (destroyedProduct === 0) {
+      return res.status(404).send("Product Not Found")
+    } 
+
+    res.status(200).send(`Successfully deleted product`)
+  } catch(err) {
+    console.log(err);
+    res.status(500).send("Server Error")
+  }
 });
+
+
 
 module.exports = router;
