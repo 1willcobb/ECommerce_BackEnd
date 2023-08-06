@@ -147,7 +147,7 @@ router.delete('/:id', async (req, res) => {
     })
 
     if (destroyedProduct === 0) {
-      return res.status(404).send("Product Not Found")
+      res.status(404).send("Product Not Found")
     } 
 
     res.status(200).send(`Successfully deleted product`)
