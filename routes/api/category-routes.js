@@ -37,7 +37,7 @@ router.get('/:id', async (req, res) => {
     }
 
     res.status(200).json(singleCategory)
-  } catch (error) {
+  } catch (err) {
     console.log(err);
     res.status(500).send("Server Error")
   }
@@ -46,8 +46,23 @@ router.get('/:id', async (req, res) => {
 // create a new category
 router.post('/', async (req, res) => {
   try {
-    res.status(200).send("Success")
-  } catch (error) {
+    const previousCategory = await Category.findAll({
+      where: {
+        category_name: req.body.category_name
+      }
+    })
+
+    console.log(previousCategory)
+
+    if (previousCategory.length > 0) {
+      res.status(400).send("Category Exists Already")
+    } else {
+      await Category.create(req.body)
+      res.status(200).send(`Successfully created new Category ${req.body.category_name}`)
+    }
+
+    
+  } catch (err) {
     console.log(err);
     res.status(500).send("Server Error")
   }
@@ -57,7 +72,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     res.status(200).send("Success")
-  } catch (error) {
+  } catch (err) {
     console.log(err);
     res.status(500).send("Server Error")
   }
@@ -67,7 +82,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     res.status(200).send("Success")
-  } catch (error) {
+  } catch (err) {
     console.log(err);
     res.status(500).send("Server Error")
   }
