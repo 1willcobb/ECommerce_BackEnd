@@ -38,6 +38,7 @@ router.get('/:id', async (req, res) => {
     console.log(err)
     res.status(500).send(err)
   }
+});
   
 
 // create a new tag
