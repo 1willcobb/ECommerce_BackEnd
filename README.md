@@ -4,7 +4,7 @@ A backend Node/Express server, RESTful API, and database for e-commerce
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-![Sample](./assets/demo.png)
+![Sample](./assets/e-com-api-photo.png)
 
 ## Description 
 
