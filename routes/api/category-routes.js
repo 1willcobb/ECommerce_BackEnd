@@ -52,8 +52,6 @@ router.post('/', async (req, res) => {
       }
     })
 
-    console.log(previousCategory)
-
     if (previousCategory.length > 0) {
       res.status(400).send("Category Exists Already")
     } else {
@@ -61,7 +59,6 @@ router.post('/', async (req, res) => {
       res.status(200).send(`Successfully created new Category ${req.body.category_name}`)
     }
 
-    
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error")
@@ -71,7 +68,19 @@ router.post('/', async (req, res) => {
 // update a category by its `id` value
 router.put('/:id', async (req, res) => {
   try {
-    res.status(200).send("Success")
+    const category = await Category.findByPk(req.params.id)
+
+    if (!category) {
+      res.status(404).send("Category not found")
+    } else {
+      await Category.update(req.body, {
+        where: {
+          id: req.params.id
+        }
+      })
+      res.status(200).json({message: "Success", category })
+    }
+
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error")
