@@ -30,7 +30,7 @@ npm install
 
   For installing this CLI application, you will need to install the dependencies .
 
-  You will need mysql setup on your dev device.
+  You will need mysql setup on your dev device you are working on.
 
   mysql connections are hidden in a .env file with the following layout. Create and place your login information in this file:
 
